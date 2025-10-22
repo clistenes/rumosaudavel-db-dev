@@ -1,0 +1,32 @@
+services:
+  mysql:
+    image: mariadb:10.3
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./rumosaudavel.sql:/docker-entrypoint-initdb.d/import.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: rumosaudavel
+      MYSQL_USER: rumo
+      MYSQL_PASSWORD: rumo
+      MYSQL_ROOT_HOST: "%"
+      TIMEZONE: America/Recife
+      MYSQL_GENERAL_LOG: 0
+      MYSQL_SOCKET_DIR: /var/run/mysqld
+    command: --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    networks:
+      - app_net
+
+volumes:
+  mysql_data:
+
+networks:
+  app_net:
+    driver: bridge
